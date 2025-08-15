@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Burn Rate Prediction</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('https://images.unsplash.com/photo-1531545514256-b1400bc00f31?auto=format&fit=crop&w=1500&q=80') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+        }
+        /* Dark overlay for readability */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.45);
+            z-index: -1;
+        }
+        header {
+            background: rgba(0,0,0,0.6);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            font-size: 1.8rem;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            padding: 40px;
+            gap: 30px;
+        }
+        .info-section {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255,255,255,0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            animation: fadeIn 1s ease-in-out;
+        }
+        .info-section h2 {
+            color: #333;
+            margin-bottom: 15px;
+        }
+        .info-section p {
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+        .form-container {
+            flex: 1;
+            min-width: 300px;
+            background: rgba(255,255,255,0.9);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            animation: fadeIn 1s ease-in-out;
+        }
+        .form-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 1.6rem;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #444;
+            font-weight: 500;
+            text-align: left;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+        input:focus, select:focus {
+            border-color: #5563DE;
+            box-shadow: 0 0 5px rgba(85, 99, 222, 0.5);
+        }
+        button {
+            width: 100%;
+            background: #5563DE;
+            color: white;
+            padding: 12px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        button:hover {
+            background: #3945a1;
+        }
+        .prediction-box {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        .prediction-box h3 {
+            color: #28a745;
+            margin: 0 0 5px;
+        }
+        .prediction-box p {
+            color: #555;
+            font-size: 0.95rem;
+            margin: 0;
+        }
+        footer {
+            text-align: center;
+            padding: 15px;
+            color: white;
+            font-size: 0.9rem;
+            background: rgba(0,0,0,0.6);
+            margin-top: 50px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <header>Burn Rate Prediction System</header>
+
+    <div class="container">
+        <!-- Left side: Info content -->
+        <div class="info-section">
+            <h2>Why Work-Life Balance Matters</h2>
+            <p>Maintaining a healthy work-life balance is crucial for both physical and mental well-being. 
+               It helps reduce stress, prevents burnout, and increases productivity in the long term.</p>
+            <p>Our Burn Rate Prediction tool uses workplace and personal workload factors to estimate your 
+               burnout risk. A lower burn rate suggests that you’re maintaining a good balance, while a 
+               higher burn rate means you may need to take steps to protect your health and performance.</p>
+            <p>Use this tool regularly to track your risk levels and make informed decisions to improve 
+               your work-life harmony.</p>
+        </div>
+
+        <!-- Right side: Prediction form -->
+        <div class="form-container">
+            <h2>Enter Details</h2>
+            <form action="/predict" method="post">
+                <label>Gender:</label>
+                <select name="gender" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                </select>
+
+                <label>Company Type:</label>
+                <select name="company_type" required>
+                    <option value="Private">Private</option>
+                    <option value="Public Sector">Public Sector</option>
+                </select>
+
+                <label>WFH Setup Available:</label>
+                <select name="wfh_setup" required>
+                    <option value="Yes">Yes</option>
+                    <option value="No">No</option>
+                </select>
+
+                <label>Mental Fatigue Score:</label>
+                <input type="number" name="mental_fatigue" step="0.01" required>
+
+                <label>Resource Allocation:</label>
+                <input type="number" name="resource_allocation" step="0.01" required>
+
+                <label>Designation:</label>
+                <input type="number" name="designation" step="1" required>
+
+                <button type="submit">Predict</button>
+            </form>
+
+            {% if prediction_text %}
+            <div class="prediction-box">
+                <h3>{{ prediction_text }}</h3>
+                {% if suggestion_text %}
+                    <p>{{ suggestion_text }}</p>
+                {% endif %}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Burn Rate Prediction | Designed for Insight & Accuracy
+    </footer>
+
+</body>
+</html>
